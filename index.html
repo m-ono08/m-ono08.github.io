@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <title>YouTube Viewer</title>
+
+  <!-- <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/navbar-fixed/"> -->
+
+
+
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+  <style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+
+
+  <!-- Custom styles for this template -->
+  <link href="navbar-top-fixed.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+      <span class="navbar-brand">
+        <h3>"プロ"アンバサダーの候補</h3>
+        <ul class="nav text-light">
+          <li> <button type="button" class="btn btn-light" id="button_channel_prev">Prev</button></li>
+          <li> <button type="button" class="btn btn-dark ms-3" id="button_number_page"></button></li>
+          <li> <button type="button" class="btn btn-light ms-3" id="button_channel_next">Next</button></li>
+        </ul>
+      </span>
+    </div>
+  </nav>
+
+
+  <main class="container">
+    <h3 id="title" class="pt-5"></h3>
+    <span id="information"></span>
+    <hr>
+    <div id="container"></div>
+  </main>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.slim.js"
+    integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY=" crossorigin="anonymous"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+
+
+  <script src="data.js"></script>
+
+  <script type="text/javascript">
+    var page_num = 0;
+    var num_movies = 5;
+
+    console.log('test');
+
+    function show_page() {
+      var element = data[page_num];
+      var channel = element['channel'];
+      var playlist = element['playlist'];
+      $('#button_number_page').text(page_num);
+
+      if (playlist.length > num_movies) {
+        playlist = playlist.slice(0, num_movies);
+      }
+
+
+      var container = $('#container');
+      container.empty()
+      playlist.forEach(item => {
+
+        var published_at = item['published_at'];
+        var i = published_at.indexOf('T');
+        if(i != -1){
+          published_at = published_at.substring(0, i);
+        }
+
+        var div = `
+        <div class="bg-light ps-2 pe-2 mt-2">
+          <h5>${item['title']}<span class="small">(${published_at})</span></h5>
+          <img src="${item['thumbnails']['url']}" class="card-img-top" width="400" height="300">
+        </div>`;
+        container.append(div);
+      });
+
+      
+
+
+      var title = `${channel['title']} (登録者数：${channel['subscriber_count']}、平均視聴回数：${_.round(count, 2)}万回)`;
+      var title = `${channel['title']}`;
+      console.log(title);
+      $('#title').text(title);
+
+      var count = channel['view_count'] / channel['video_count'] / 10000;
+      var subscriber_count = channel['subscriber_count'] / 10000;
+      var information = `(登録者数：${_.round(subscriber_count, 2)}万人、平均視聴回数：${_.round(count, 2)}万回)`;
+      $('#information').text(information);
+      
+      
+
+    }
+
+
+    function button_channel_prev() {
+      page_num = Math.max(page_num - 1, 0);
+      show_page();
+    }
+
+    function button_channel_next() {
+      page_num = Math.min(page_num + 1, data.length - 1);
+      show_page();
+    }
+
+    // init
+    $('#button_channel_prev').on('click', button_channel_prev.bind(this));
+    $('#button_channel_next').on('click', button_channel_next.bind(this));
+    show_page(0);
+  </script>
+
+
+</body>
+
+</html>
