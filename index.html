@@ -53,6 +53,7 @@
 
 
   <main class="container">
+
     <h3 id="title" class="pt-5"></h3>
     <span id="information"></span>
     <hr>
@@ -76,8 +77,6 @@
     var page_num = 0;
     var num_movies = 5;
 
-    console.log('test');
-
     function show_page() {
       var element = data[page_num];
       var channel = element['channel'];
@@ -99,10 +98,13 @@
           published_at = published_at.substring(0, i);
         }
 
+        var url = 'https://www.youtube.com/watch?v=' + item['movie_id'];
         var div = `
         <div class="bg-light ps-2 pe-2 mt-2">
           <h5>${item['title']}<span class="small">(${published_at})</span></h5>
-          <img src="${item['thumbnails']['url']}" class="card-img-top" width="400" height="300">
+          <a href="${url}">
+            <img src="${item['thumbnails']['url']}" class="card-img-top" width="400" height="300">
+          </a>
         </div>`;
         container.append(div);
       });
@@ -119,9 +121,6 @@
       var subscriber_count = channel['subscriber_count'] / 10000;
       var information = `(登録者数：${_.round(subscriber_count, 2)}万人、平均視聴回数：${_.round(count, 2)}万回)`;
       $('#information').text(information);
-      
-      
-
     }
 
 
